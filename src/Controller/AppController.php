@@ -16,6 +16,7 @@ namespace App\Controller;
 
 use Cake\Controller\Controller;
 use Cake\Event\Event;
+use Cake\Datasource\ConnectionManager;  
 
 /**
  * Application Controller
@@ -45,8 +46,25 @@ class AppController extends Controller
             'enableBeforeRedirect' => false,
         ]);
         $this->loadComponent('Flash');
-        $this->loadComponent('Auth');
-         $this->Auth->allow(['add','index']);
+        $this->loadComponent('Auth',[
+
+            'authorize' => ['Controller'],
+            'loginRedirect' => [
+
+                'controller'=>'Users',
+                'action'   => 'index'
+            ],
+            'logoutRedirect' => [
+
+                'controller' => 'Users',
+                'action' => 'login'
+            ]
+
+        ]);
+        //$this->loadComponent('Auth');
+         $this->Auth->allow(['add']);
+       
+       // die();
 
         /*
          * Enable the following component for recommended CakePHP security settings.
@@ -59,4 +77,34 @@ class AppController extends Controller
     //     $this->Auth->allow(['add','index']);
     //     $this->set('username',$this->Auth->user('username'));
     // }
+
+
+    public function isAuthorized($user)
+    {
+        $match =  $this->request->getParam('action');
+        $control = $this->request->getParam('controller');
+        //echo "<br>".$control."<br>";
+        //die();
+        $user_role =  $user['roles'];
+      // die();
+       
+       $connection = ConnectionManager::get('default');
+       // $result = $connection->execute("select action from roles where roles ='".$user_role."'"." && action ='".$match."'"."&& controller = '".$control."'");
+
+       $result = $connection->execute("select action from roles where roles = ? && action = ? && controller = ? ", [$user_role,$match,$control]);
+
+       //pr($result);
+       //die();
+        // $result  = array();
+       foreach($result as $row)
+       {
+           // $flag =1;
+            return true;
+       }
+
+       
+      // die();
+        //$this->Auth-deny('index');
+       // return true; // feth data from database and then deny the required action.
+    }
 }

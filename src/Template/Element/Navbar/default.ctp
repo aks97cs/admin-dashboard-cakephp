@@ -158,12 +158,24 @@
                   </div>
                 </div>
               </a>
-              <a class="dropdown-item mt-2">
-                Manage Accounts
-              </a>
-              <a class="dropdown-item">
-                Change Password
-              </a>
+              <?php
+
+               
+               
+               if($userRoles == 'admin')
+               {
+
+        echo '<a class="dropdown-item mt-2" href="http://localhost/new/admin/project1/users/manageUser">
+                Manage Users
+              </a>';
+         echo '<a class="dropdown-item" href="http://localhost/new/admin/project1/roles">
+                Manage Roles
+              </a>';
+
+               }
+
+               ?>
+              
               <a class="dropdown-item">
                 Check Inbox
               </a>
@@ -193,7 +205,7 @@
                 <div class="text-wrapper">
                   <p class="profile-name"><?= $y ?></p>
                   <div>
-                    <small class="designation text-muted"><?= $roles ?></small>
+                    <small class="designation text-muted"><?= $userRoles ?></small>
                     <span class="status-indicator online"></span>
                   </div>
                 </div>
@@ -204,7 +216,7 @@
             </div>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" href="http://localhost/new/admin/project1/users">
               <i class="menu-icon mdi mdi-television"></i>
               <span class="menu-title">Dashboard</span>
             </a>

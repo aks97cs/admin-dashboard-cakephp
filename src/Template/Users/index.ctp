@@ -22,7 +22,9 @@
         </thead>
         <tbody>
             <?php foreach ($users as $user): ?>
+            
             <tr>
+                
                 <td><?= $this->Number->format($user->id) ?></td>
                 <td><?= h($user->username) ?></td>
                 <td><?= h($user->email) ?></td>

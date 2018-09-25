@@ -5,6 +5,8 @@ use App\Controller\AppController;
  use Cake\ORM\TableRegistry;
    use Cake\Datasource\ConnectionManager;
    use Cake\Auth\DefaultPasswordHasher;
+   use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * Users Controller
@@ -21,6 +23,44 @@ class UsersController extends AppController
      *
      * @return \Cake\Http\Response|void
      */
+
+
+public function getControllers() 
+{
+    $files = scandir('../src/Controller/');
+    $results = [];
+    $ignoreList = [
+        '.', 
+        '..', 
+        'Component', 
+        'AppController.php',
+    ];
+    foreach($files as $file){
+        if(!in_array($file, $ignoreList)) {
+            $controller = explode('.', $file)[0];
+            array_push($results, str_replace('Controller', '', $controller));
+        }            
+    }
+
+    $this->set('xyz',$results);
+
+   // return $results;
+}
+
+// public function getActions($controllerName) {
+//     $className = 'App\\Controller\\'.$controllerName.'Controller';
+//     $class = new ReflectionClass($className);
+//     $actions = $class->getMethods(ReflectionMethod::IS_PUBLIC);
+//     $results = [$controllerName => []];
+//     $ignoreList = ['beforeFilter', 'afterFilter', 'initialize'];
+//     foreach($actions as $action){
+//         if($action->class == $className && !in_array($action->name, $ignoreList)){
+//             array_push($results[$controllerName], $action->name);
+//         }   
+//     }
+//     return $results;
+// }
+
     public function index()
     {
         $users = $this->paginate($this->Users);
@@ -42,7 +82,9 @@ class UsersController extends AppController
         $this->set('y',$xxx);
 
         $this->set('img_name',$user['img']);
-        $this->set('roles',$user['roles']);
+        $this->set('userRoles',$user['roles']);
+    
+        //$this->set('flag',$flag);
     }
 
     /**
@@ -66,7 +108,7 @@ class UsersController extends AppController
         $this->set('y',$xxx);
 
         $this->set('img_name',$user['img']);
-        $this->set('roles',$user['roles']);
+        $this->set('userRoles',$user['roles']);
     }
 
     /**
@@ -157,13 +199,15 @@ class UsersController extends AppController
              $this->Flash->success(__('The user unable to save.'));
 
 
-        $user = $this->Auth->user();
-        $xxx = $user['username'];
+        $this->set(compact('user'));
+
+        $user1 = $this->Auth->user();
+        $xxx = $user1['username'];
         //pr($user);die();
         $this->set('y',$xxx);
 
-        $this->set('img_name',$user['img']);
-        $this->set('roles',$user['roles']);
+        $this->set('img_name',$user1['img']);
+        $this->set('userRoles',$user1['roles']);
 
             
 
@@ -201,7 +245,7 @@ class UsersController extends AppController
         $this->set('y',$xxx);
 
         $this->set('img_name',$user['img']);
-        $this->set('roles',$user['roles']);
+        $this->set('userRoles',$user['roles']);
     }
 
     /**
@@ -243,8 +287,43 @@ class UsersController extends AppController
     {
         return $this->redirect($this->Auth->logout());
     }
-    public function isAuthorized($user)
+
+    public function manageUser()
     {
-        return false;
+
+
+        
+        $users = $this->paginate($this->Users);
+
+        $this->set(compact('users'));
+
+          $user = $this->Auth->user();
+        $xxx = $user['username'];
+        //pr($user);die();
+        $this->set('y',$xxx);
+
+        $this->set('img_name',$user['img']);
+        $this->set('userRoles',$user['roles']);
+
+        $connection = ConnectionManager::get('default');
+        $res = $connection->execute('select * from users')->fetchall('assoc');
+        $this->set('res',$res);
+        $rll =  $connection->execute('select * from roles')->fetchall('assoc');
+        $this->set('rll',$rll);
+        if($this->request->is('post'))
+        {
+            $rrr = $this->request->data('roles');
+            $nnn = $this->request->data('username');
+            //echo $rrr;
+            //echo $nnn;
+            //die();
+            $connection->update('users',['roles'=>$rrr],['username'=>$nnn]);
+        }
+
+
+
+       // pr($xyz);
+        
     }
+
 }

@@ -4,28 +4,34 @@
  * @var \App\Model\Entity\Role $role
  */
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-    <ul class="side-nav">
-        <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $role->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $role->id)]
-            )
-        ?></li>
-        <li><?= $this->Html->link(__('List Roles'), ['action' => 'index']) ?></li>
-    </ul>
-</nav>
 <div class="roles form large-9 medium-8 columns content">
     <?= $this->Form->create($role) ?>
     <fieldset>
         <legend><?= __('Edit Role') ?></legend>
         <?php
             echo $this->Form->control('roles');
-            echo $this->Form->control('controller');
-            echo $this->Form->control('action');
+            //echo $this->Form->control('controller');
+            echo $this->Form->control('controller', ['options' => $xyz]);
+           //echo $this->Form->control('controller',['type'=>'select','options'=>$xyz,'value' => $xyz]);
+            //echo $this->Form->control('action');
+
+            echo $this->Form->control('action', ['options' => $www]);
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
+
+    <?php
+    // pr($xyz);
+    // die();
+$i=0;
+//pr($www);
+//die();
+        foreach($www as $row)
+        {
+            echo $row."<br>";
+            $i++;
+        }
+
+     ?>
 </div>
